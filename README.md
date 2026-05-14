@@ -14,6 +14,64 @@
 
 <p align="center">一个基于 React Native 开发的音乐软件</p>
 
+## 关于本仓库（Pride-lee / [lx-music-mobile](https://github.com/Pride-lee/lx-music-mobile)）
+
+本仓库在 **[lyswhut/lx-music-mobile](https://github.com/lyswhut/lx-music-mobile)** 上游基础上，合并他人分支后做了功能与体验向的修改。**Release 与 Issue 请以本仓库为准**；上游更新可通过 `git remote add upstream …` 后自行 `fetch` / `merge`。
+
+### 相对上游的主要改动
+
+| 模块 | 说明 |
+|------|------|
+| **底部导航** | 新增 `BottomBar`（`src/screens/Home/components/BottomBar.tsx`），横版 / 竖版首页接入；`LIST_IDS` 增加 `download` 页签（`src/config/constant.ts`）。 |
+| **下载到本地** | 在线列表、我的歌单列表菜单支持下载（`OnlineList`、`Mylist/MusicList` 的 `ListMenu` / `listAction`）。核心逻辑在 `src/core/music/downloader.ts`。 |
+| **保存路径（Android）** | 使用系统公共目录 **`Download/lxmusic`**（`src/utils/fs.ts` 中 `getMusicDownloadDirectoryPath` / `ensureMusicDownloadDirectory`），便于在系统文件管理器的「下载」里找到；iOS 为应用沙盒 `Documents/download/lxmusic`。下载完成后 Android 会 `scanFile` 便于媒体库识别。 |
+| **存储权限** | Android 在写入公共下载目录前调用 `requestStoragePermission`（`src/utils/tools.ts`，非 Android 直接视为已授权）；拒绝或「不再询问」时 Toast / 弹窗引导前往系统设置（多语言文案见 `src/lang/*.json`）。 |
+| **下载音质与 CDN** | 下载取链音质与 **设置 → 播放音质** 一致（`getPlayQuality` + `getMusicUrl`）；下载请求附带各音源常见 **`Referer`**，减轻高码率直链 403。默认示例配置里 `player.playQuality` 为 `320k`（`src/config/defaultSetting.ts`，可按需调整）。 |
+| **下载页** | `src/screens/Home/Views/Download/index.js`：展示本地下载列表、刷新等。 |
+| **界面** | `PlayerBar` 等样式调整；`PactModal` 等小改动。 |
+| **Android 工程** | `android/build.gradle`、`gradle.properties`、`gradle-wrapper.properties` 等为本地可打包环境调整（若你环境不同请自行对齐）。 |
+
+### 同步上游示例
+
+```bash
+git fetch upstream
+git merge upstream/master   # 或 git rebase upstream/master
+```
+
+### 自动同步上游 + 自动打包到 Release
+
+仓库已附带两个工作流，配合一次性配置即可让「同步上游」与「打包发版」全自动跑：
+
+- `.github/workflows/sync-upstream.yml`：每天 UTC 18:00（北京 02:00）自动 `merge upstream/master` 并推送，可在 Actions 页手动触发。
+- `.github/workflows/release.yml`：`push master` 或手动 `workflow_dispatch` 时构建多架构 APK 并发到 [Releases](https://github.com/Pride-lee/lx-music-mobile/releases)。
+
+#### 一次性需要在 GitHub 配置的 Secrets
+
+在仓库 **Settings → Secrets and variables → Actions → New repository secret** 添加：
+
+| Secret | 用途 | 是否必需 |
+|--------|------|----------|
+| `KEYSTORE_STORE_FILE_BASE64` | Android 签名 keystore 的 **base64**（`base64 -w0 your.keystore`） | 必需 |
+| `KEYSTORE_STORE_FILE` | keystore 文件名（构建时落到 `android/app/<这个名字>`） | 必需 |
+| `KEYSTORE_KEY_ALIAS` | keystore 的 key alias | 必需 |
+| `KEYSTORE_PASSWORD` | keystore 密码 | 必需 |
+| `KEYSTORE_KEY_PASSWORD` | key 密码 | 必需 |
+| `SYNC_TOKEN` | 一个 **Fine-grained PAT**，对本仓库给 **Contents: Read and write** + **Actions: Read and write**；用来让自动同步推送的提交能触发后续 workflow | 可选，强烈建议 |
+
+> 不配置 `SYNC_TOKEN` 也能跑：默认会退化为 `GITHUB_TOKEN` 推送，并显式调用 `release.yml` 的 `workflow_dispatch` 兜底；但 PAT 模式更稳，且能让 release.yml 通过 `push` 事件自然触发。
+
+#### 触发方式
+
+- **自动**：每天定时；如上游有更新，工作流会合并、推送并自动调起 Release 打包。
+- **手动**：到 **Actions → Sync Upstream → Run workflow**，可选输入 `upstream_branch`（默认 `master`）和是否同时跑 Release。
+- **直接发版**：到 **Actions → Build → Run workflow**，无需同步即可基于当前 master 重新打包发布。
+
+#### 版本号说明
+
+`release.yml` 使用 `package.json` 中的 `version` 作为 tag（前缀 `v`）。同步上游若未修改 `version`，tag 已存在时 `pkgdeps/git-tag-action` 不会重复创建；若希望每次同步都发新 release，可在合并完手动 bump 一下 `package.json` 的 version 再 push。
+
+---
+
 ## 说明
 
 所用技术栈：

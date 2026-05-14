@@ -18,7 +18,7 @@ const Content = () => {
   const theme = useTheme()
 
   const openHomePage = () => {
-    void openUrl('https://github.com/lyswhut/lx-music-mobile#readme')
+    void openUrl('https://github.com/Pride-lee/lx-music-mobile#readme')
   }
   const openLicensePage = () => {
     void openUrl('http://www.apache.org/licenses/LICENSE-2.0')
@@ -69,7 +69,7 @@ const Footer = ({ componentId }: { componentId: string }) => {
   const theme = useTheme()
   const isAgreePact = useSettingValue('common.isAgreePact')
   // const checkUpdate = useDispatch('common', 'checkUpdate')
-  const [time, setTime] = useState(20)
+  const [time, setTime] = useState(5)
 
   const handleRejct = () => {
     exitApp()
