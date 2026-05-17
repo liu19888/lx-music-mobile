@@ -45,7 +45,6 @@ export const handleUpdateMusicPosition = (position: number, listId: SelectInfo['
     void updateListMusicPosition(listId, position, selectedList.map(s => s.id))
     onCancelSelect()
   } else {
-    // console.log(listId, position, [musicInfo.id])
     void updateListMusicPosition(listId, position, [musicInfo.id])
   }
 }
@@ -72,9 +71,6 @@ export const handleShare = (musicInfo: SelectInfo['musicInfo']) => {
   shareMusic(settingState.setting['common.shareType'], settingState.setting['download.fileName'], musicInfo)
 }
 
-/**
- * 下载在线歌曲到本地目录，忽略本地歌曲。
- */
 export const handleDownload = async(musicInfo: SelectInfo['musicInfo']) => {
   if (musicInfo.source == 'local') return
   if (isMusicDownloading(musicInfo)) {
@@ -106,7 +102,7 @@ export const searchListMusic = (list: LX.Music.MusicInfo[], text: string) => {
     }
   }
   let result: LX.Music.MusicInfo[] = []
-  let rxp = new RegExp(text.split('').map(s => s.replace(/[.*+?^${}()|[\]\\]/, '\\$&')).join('.*') + '.*', 'i')
+  const rxp = new RegExp(text.split('').map(s => s.replace(/[.*+?^${}()|[\]\\]/, '\\$&')).join('.*') + '.*', 'i')
   for (const mInfo of list) {
     if (fullMathNameResults.has(mInfo) || fullMathSingerResults.has(mInfo) || fullMathAlbumResults.has(mInfo)) continue
 

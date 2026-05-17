@@ -54,9 +54,6 @@ export const handleDislikeMusic = async(musicInfo: LX.Music.MusicInfoOnline) => 
   }
 }
 
-/**
- * 下载在线歌曲到本地目录，并提示用户结果。
- */
 export const handleDownload = async(musicInfo: LX.Music.MusicInfoOnline) => {
   if (isMusicDownloading(musicInfo)) {
     toast(global.i18n.t('download_start', { name: musicInfo.name }))
@@ -70,4 +67,3 @@ export const handleDownload = async(musicInfo: LX.Music.MusicInfoOnline) => {
     toast(err instanceof Error && err.message ? err.message : global.i18n.t('download_failed'), 'long')
   }
 }
-

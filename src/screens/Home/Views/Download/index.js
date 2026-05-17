@@ -57,7 +57,7 @@ const DownloadRow = ({ item, onPlay, onRemoveRecord, onRemoveFile }) => {
       </View>
       <View style={styles.rowActions}>
         {isCompleted ? <ActionButton label="播放" onPress={() => { void onPlay(item) }} /> : null}
-        {item.taskId ? <ActionButton label={isCompleted ? '删记录' : '删记录'} onPress={() => { void onRemoveRecord(item) }} danger={!isCompleted} /> : null}
+        {item.taskId ? <ActionButton label="删记录" onPress={() => { void onRemoveRecord(item) }} danger={!isCompleted} /> : null}
         {item.path ? <ActionButton label="删文件" onPress={() => { void onRemoveFile(item) }} danger /> : null}
       </View>
     </View>

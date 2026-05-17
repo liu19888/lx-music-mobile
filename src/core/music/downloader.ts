@@ -167,7 +167,6 @@ const runDownloadMusicToLocal = async(musicInfo: LX.Music.MusicInfoOnline) => {
   while (true) {
     const suffix = index === 0 ? '' : ` (${index})`
     savePath = `${downloadDir}/${baseName}${suffix}.${ext}`.replace(/\/+/g, '/')
-    // eslint-disable-next-line no-await-in-loop
     if (!(await existsMusicDownloadTarget(savePath))) break
     index++
   }
@@ -213,7 +212,6 @@ const runDownloadMusicToLocal = async(musicInfo: LX.Music.MusicInfoOnline) => {
       })
     },
   }).promise
-
   if (result.statusCode < 200 || result.statusCode >= 300) {
     throw new Error(`download failed: ${result.statusCode}`)
   }
