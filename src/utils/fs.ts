@@ -9,6 +9,7 @@ import {
   type HashAlgorithm,
   getExternalStoragePaths as _getExternalStoragePaths,
 } from 'react-native-file-system'
+import settingState from '@/store/setting/state'
 
 export type {
   FileType,
@@ -31,6 +32,8 @@ const MUSIC_DOWNLOAD_APP_FOLDER = 'lxmusic'
  * iOS：无与用户共享的公共 Download，使用应用沙盒 `Documents/download/lxmusic`。
  */
 export const getMusicDownloadDirectoryPath = (): string => {
+  const customPath = settingState.setting['download.savePath']?.trim()
+  if (customPath) return customPath.replace(/\/+/g, '/')
   if (Platform.OS === 'android') {
     const root = (RNFS.DownloadDirectoryPath ?? '').replace(/\/+$/, '')
     if (root.length > 0) {
@@ -71,6 +74,7 @@ export interface MusicDownloadDirItem {
  */
 export const readMusicDownloadDirectory = async(): Promise<MusicDownloadDirItem[]> => {
   const dir = getMusicDownloadDirectoryPath()
+  if (!(await RNFS.exists(dir))) return []
   if (Platform.OS === 'android') {
     const list = await RNFS.readDir(dir)
     return list.map(item => ({
@@ -105,6 +109,11 @@ export const scanMusicDownloadFile = async(path: string): Promise<void> => {
   } catch {
     // 扫描失败不影响下载已成功写入磁盘
   }
+}
+
+export const removeMusicDownloadTarget = async(path: string): Promise<void> => {
+  if (!(await RNFS.exists(path))) return
+  await RNFS.unlink(path)
 }
 
 export const getExternalStoragePaths = async(is_removable?: boolean) => _getExternalStoragePaths(is_removable)

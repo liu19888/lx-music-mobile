@@ -314,6 +314,7 @@
   "setting_dislike_list_input_tip": "標題@演出者\n標題\n@演出者",
   "setting_dislike_list_tips": "1. 每條一行，若歌曲或者演出者名字中存在「@」符號，需要將其取代成「#」\n2. 指定某演出者的某首歌：標題@演出者\n3. 指定某首歌：演出者\n4. 指定某演出者：@演出者",
   "setting_list": "清單設定",
+  "setting_download": "下載設定",
   "setting_list_add_music_location_type": "添加歌曲到清單時的位置",
   "setting_list_add_music_location_type_bottom": "底部",
   "setting_list_add_music_location_type_top": "頂部",

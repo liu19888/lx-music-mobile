@@ -350,6 +350,8 @@ declare global {
        * 文件命名方式
        */
       'download.fileName': '歌名 - 歌手' | '歌手 - 歌名' | '歌名'
+      'download.savePath': string
+      'download.quality': LX.Quality
 
       /**
        * 是否启用同步
