@@ -1,4 +1,4 @@
-﻿const ios = require('@react-native-community/cli-platform-ios')
+const ios = require('@react-native-community/cli-platform-ios')
 const android = require('@react-native-community/cli-platform-android')
 const communityCliPlugin = require('@react-native/community-cli-plugin')
 
