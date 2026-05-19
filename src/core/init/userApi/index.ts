@@ -1,10 +1,11 @@
 import { type InitParams, onScriptAction, sendAction, type ResponseParams, type UpdateInfoParams, type RequestParams } from '@/utils/nativeModules/userApi'
-import { log, setUserApiList, setUserApiStatus } from '@/core/userApi'
+import { log, setUserApiList, setUserApiStatus, importUserApi } from '@/core/userApi'
 import settingState from '@/store/setting/state'
 import BackgroundTimer from 'react-native-background-timer'
 import { fetchData } from './request'
 import { getUserApiList } from '@/utils/data'
 import { confirmDialog, openUrl, tipDialog } from '@/utils/tools'
+import { BUNDLED_SOURCES } from '@/assets/sources'
 
 
 export default async(setting: LX.AppSetting) => {
@@ -252,5 +253,25 @@ export default async(setting: LX.AppSetting) => {
     }
   })
 
+  setUserApiList(await getUserApiList())
+
+  // Auto-inject bundled music sources if not already present
+  const existingList = await getUserApiList()
+  for (const { name, script } of BUNDLED_SOURCES) {
+    // Check if this source is already installed by trying to match the script header
+    const isInstalled = existingList.some(api => {
+      // Match by source name keyword in script header (e.g. "野花" or "星海音乐源")
+      return script.includes(`@name ${api.name}`) || api.script?.includes(`@name ${name}`)
+    })
+    if (!isInstalled) {
+      try {
+        await importUserApi(script)
+        log.info(`Bundled source "${name}" auto-imported`)
+      } catch (e: any) {
+        log.warn(`Failed to auto-import bundled source "${name}": ${e.message}`)
+      }
+    }
+  }
+  // Refresh the list after potential imports
   setUserApiList(await getUserApiList())
 }
