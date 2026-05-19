@@ -40,11 +40,8 @@ jobs:
             ./gradlew assembleRelease -PMYAPP_UPLOAD_STORE_FILE="$KEYSTORE_STORE_FILE" -PMYAPP_UPLOAD_KEY_ALIAS="$KEYSTORE_KEY_ALIAS" -PMYAPP_UPLOAD_STORE_PASSWORD="$KEYSTORE_PASSWORD" -PMYAPP_UPLOAD_KEY_PASSWORD="$KEYSTORE_KEY_PASSWORD"
             rm -f "app/$KEYSTORE_STORE_FILE"
           else
-            echo "No keystore secrets found, building debug APK instead..."
-            ./gradlew assembleDebug
-            # Move debug APK to release output dir so upload-artifact can find it
-            mkdir -p app/build/outputs/apk/release
-            cp app/build/outputs/apk/debug/*.apk app/build/outputs/apk/release/ 2>/dev/null || true
+            echo "No keystore secrets found, building with debug signing (via build.gradle fallback)..."
+            ./gradlew assembleRelease
           fi
 
       # Push tag to GitHub if package.json version's tag is not tagged
