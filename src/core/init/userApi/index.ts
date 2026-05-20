@@ -273,5 +273,15 @@ export default async(setting: LX.AppSetting) => {
     }
   }
   // Refresh the list after potential imports
-  setUserApiList(await getUserApiList())
+  const finalList = await getUserApiList()
+  setUserApiList(finalList)
+
+  // Auto-select flower source if no API source is currently active
+  if (!setting['common.apiSource']) {
+    const flowerSource = finalList.find(api => api.name.includes('野花'))
+    if (flowerSource) {
+      setting['common.apiSource'] = flowerSource.id
+      log.info(`Auto-selected bundled source: ${flowerSource.name} (${flowerSource.id})`)
+    }
+  }
 }
